@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Modern Cube Timer</title>
+</head>
+<body>
+    <div id="app">
+        <h1 id="title">Speedcubing Timer</h1>
+        <div id="timer-container">
+            <h2 id="timer">00:00.00</h2>
+            <h3 id="scramble">Scramble: U R' U2 L2 D2</h3>
+            <div id="timer-controls">
+                <div id="countdown-timer" class="hidden">3</div>
+                <button id="start-stop" class="btn">Start</button>
+            </div>
+        </div>
+
+        <div id="history-container" class="card">
+            <h3>History & Averages</h3>
+            <div id="averages">
+                <p id="ao5">Ao5: -</p>
+                <p id="ao12">Ao12: -</p>
+            </div>
+            <div id="history">
+                <ul id="solves"></ul>
+            </div>
+        </div>
+
+        <div id="visuals">
+            <canvas id="graph"></canvas>
+        </div>
+    </div>
+
+    <script src="index.js"></script>
+</body>
+</html>
