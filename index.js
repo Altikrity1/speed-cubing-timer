@@ -1,8 +1,7 @@
-// Updated timer logic with CSTimer-style behavior
+// Updated timer logic with CSTimer-style behavior for mobile
 const timerDisplay = document.getElementById("timer");
 const scrambleDisplay = document.getElementById("scramble");
 const countdownText = document.getElementById("countdown");
-const startStopBtn = document.getElementById("start-stop");
 const ao5Display = document.getElementById("ao5");
 const ao12Display = document.getElementById("ao12");
 const timesList = document.getElementById("times-list");
@@ -16,6 +15,7 @@ let solveTimes = [];
 let countdown = 3;
 let countdownInterval = null;
 let countdownRunning = false;
+let longPressTimeout = null;
 
 function formatTime(ms) {
   const totalSeconds = Math.floor(ms / 1000);
@@ -147,25 +147,29 @@ function startCountdownAndTimer() {
   }, 1000);
 }
 
-// Improved keyboard and touch control
-let isKeyPressed = false;
+// Touch-based controls
+let isTouchActive = false;
 
-window.addEventListener("keydown", (e) => {
-  if (e.code === "Space") {
-    e.preventDefault(); // Prevent scrolling on spacebar press
-    if (!isKeyPressed) {
-      isKeyPressed = true;
-      if (running) {
-        stopTimer();
-      } else {
-        startCountdownAndTimer();
-      }
-    }
+document.addEventListener("touchstart", (e) => {
+  e.preventDefault(); // Prevent default touch behavior
+
+  if (!isTouchActive) {
+    // Set a timeout for long press detection
+    longPressTimeout = setTimeout(() => {
+      isTouchActive = true;
+      startCountdownAndTimer();
+    }, 500); // 500ms delay for long press
   }
 });
 
-window.addEventListener("keyup", () => {
-  isKeyPressed = false; // Reset keypress flag on key release
+document.addEventListener("touchend", () => {
+  clearTimeout(longPressTimeout); // Clear the timeout if the touch ends early
+
+  if (isTouchActive) {
+    // Quick tap to stop the timer
+    stopTimer();
+    isTouchActive = false;
+  }
 });
 
 // Init scramble
