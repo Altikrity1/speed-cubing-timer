@@ -1,171 +1,120 @@
-/* Global Styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+/* style.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #121212;
-    color: #f1f1f1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    overflow: hidden;
-    padding: 20px;
+  font-family: 'Roboto', Arial, sans-serif;
+  background-color: #f2f2f2;
+  color: #333;
+  text-align: center;
+  margin: 0;
+  padding: 20px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+body.dark-mode {
+  background-color: #121212;
+  color: #e0e0e0;
 }
 
 #app {
-    text-align: center;
-    max-width: 1200px;
-    width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 #title {
-    font-size: 3rem;
-    margin-bottom: 20px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: #e0e0e0;
-    font-weight: 600;
+  font-size: 2.5rem;
+  margin-bottom: 30px;
+  font-weight: 700;
 }
 
 #timer-container {
-    margin-bottom: 40px;
-    padding: 20px;
-    background: #222;
-    border-radius: 15px;
-    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.6);
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+  transition: background-color 0.3s;
+}
+
+body.dark-mode #timer-container {
+  background-color: #2d2d2d;
 }
 
 #timer {
-    font-size: 5rem;
-    font-family: 'Courier New', Courier, monospace;
-    color: #39ff14;
-    text-shadow: 0 0 20px rgba(57, 255, 20, 0.8);
+  font-size: 3rem;
+  margin: 20px 0;
+}
+
+#countdown {
+  font-size: 1.5rem;
+  color: #888;
 }
 
 #scramble {
-    font-size: 1.5rem;
-    color: #bbb;
-    margin-top: 10px;
+  font-size: 1.2rem;
+  margin: 15px 0;
 }
 
 #start-stop {
-    padding: 12px 24px;
-    background: #39ff14;
-    border: none;
-    color: #121212;
-    font-size: 1.2rem;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: background 0.3s ease;
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #0077ff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
 #start-stop:hover {
-    background: #34d400;
+  background-color: #005fcc;
 }
 
-#countdown-timer {
-    font-size: 3rem;
-    margin-bottom: 15px;
-    color: #ff3e3e;
-    display: none;
-    font-weight: bold;
+#history-section,
+#averages-section,
+#chart-section {
+  background-color: #fff;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  transition: background-color 0.3s;
+}
+
+body.dark-mode #history-section,
+body.dark-mode #averages-section,
+body.dark-mode #chart-section {
+  background-color: #2d2d2d;
+}
+
+ul#times-list {
+  list-style: none;
+  padding: 0;
+}
+
+ul#times-list li {
+  padding: 6px 0;
+  border-bottom: 1px solid #ddd;
+  transition: border-color 0.3s;
+}
+
+body.dark-mode ul#times-list li {
+  border-color: #444;
 }
 
 .hidden {
-    display: none;
+  display: none;
 }
 
-/* History */
-#history-container {
-    background: #333;
-    border-radius: 15px;
-    padding: 20px;
-    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.6);
-}
-
-#averages p {
-    font-size: 1.4rem;
-    margin: 5px 0;
-}
-
-#history ul {
-    list-style-type: none;
-    max-height: 200px;
-    overflow-y: scroll;
-    padding: 0;
-}
-
-#history li {
-    background: #444;
-    border-radius: 8px;
-    padding: 8px;
-    margin-bottom: 10px;
-    font-size: 1.2rem;
-}
-
-#visuals {
-    margin-top: 40px;
-}
-
-canvas {
-    width: 100%;
-    height: 300px;
-    background: #222;
-    border-radius: 10px;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    #timer {
-        font-size: 3.5rem;
-    }
-    #title {
-        font-size: 2.5rem;
-    }
-    #averages p {
-        font-size: 1.2rem;
-    }
-}
-/* Invisible scrollbar */
-#history-container {
-    overflow-y: scroll;
-}
-
-#history-container::-webkit-scrollbar {
-    width: 0px;
-    background: transparent;
-}
-
-#history-container {
-    -ms-overflow-style: none;  /* For Internet Explorer 10+ */
-    scrollbar-width: none; /* For Firefox */
-}
-
-/* Modern styled scrollbar (for browsers that support it) */
-#history-container::-webkit-scrollbar {
-    width: 8px; /* Thin scrollbar */
-}
-
-#history-container::-webkit-scrollbar-track {
-    background: #222;
-    border-radius: 10px;
-}
-
-#history-container::-webkit-scrollbar-thumb {
-    background: #39ff14; /* Neon green thumb */
-    border-radius: 10px;
-}
-
-#history-container::-webkit-scrollbar-thumb:hover {
-    background: #34d400; /* Lighter green on hover */
-}
-
-#history-container {
-    scrollbar-width: thin;
-    scrollbar-color: #39ff14 #222; /* Thumb and track color for Firefox */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
