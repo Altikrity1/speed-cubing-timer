@@ -1,19 +1,21 @@
+// Updated timer logic with CSTimer-style behavior
 const timerDisplay = document.getElementById("timer");
 const scrambleDisplay = document.getElementById("scramble");
-const countdownTimer = document.getElementById("countdown-timer");
+const countdownText = document.getElementById("countdown");
 const startStopBtn = document.getElementById("start-stop");
 const ao5Display = document.getElementById("ao5");
 const ao12Display = document.getElementById("ao12");
-const solvesList = document.getElementById("solves");
-const graphCanvas = document.getElementById("graph");
-const ctx = graphCanvas.getContext("2d");
+const timesList = document.getElementById("times-list");
+const canvas = document.getElementById("timesChart");
+const ctx = canvas.getContext("2d");
 
 let startTime = null;
 let running = false;
 let animationFrameId = null;
 let solveTimes = [];
 let countdown = 3;
-let countdownInterval;
+let countdownInterval = null;
+let countdownRunning = false;
 
 function formatTime(ms) {
   const totalSeconds = Math.floor(ms / 1000);
@@ -35,8 +37,6 @@ function startTimer() {
     startTime = performance.now();
     running = true;
     updateTimer();
-    startStopBtn.textContent = "Stop";
-    startStopBtn.style.backgroundColor = "#ff3e3e";
   }
 }
 
@@ -44,8 +44,6 @@ function stopTimer() {
   if (running) {
     running = false;
     cancelAnimationFrame(animationFrameId);
-    startStopBtn.textContent = "Start";
-    startStopBtn.style.backgroundColor = "#39ff14";
     saveSolve();
   }
 }
@@ -64,19 +62,30 @@ function saveSolve() {
 
   const li = document.createElement("li");
   li.textContent = `${solveTimes.length}. ${formatted}`;
-  solvesList.appendChild(li);
+  timesList.appendChild(li);
 
   updateAverages();
   scrambleDisplay.textContent = generateScramble();
   plotGraph();
 }
 
+function updateAverages() {
+  const ao5 = solveTimes.slice(-5);
+  if (ao5.length === 5) {
+    const avg = ao5.reduce((a, b) => a + b) / 5;
+    ao5Display.textContent = `Ao5: ${formatTime(avg)}`;
+  }
+
+  const ao12 = solveTimes.slice(-12);
+  if (ao12.length === 12) {
+    const avg = ao12.reduce((a, b) => a + b) / 12;
+    ao12Display.textContent = `Ao12: ${formatTime(avg)}`;
+  }
+}
+
 function generateScramble(length = 20) {
   const moves = ["U", "D", "L", "R", "F", "B"];
   const modifiers = ["", "'", "2"];
-  let scramble = [];
-  let prevAxis = "";
-
   const axisGroups = {
     U: "UD",
     D: "UD",
@@ -86,80 +95,78 @@ function generateScramble(length = 20) {
     B: "FB",
   };
 
+  let scramble = [];
+  let prevAxis = "";
+
   while (scramble.length < length) {
     const move = moves[Math.floor(Math.random() * moves.length)];
     const modifier = modifiers[Math.floor(Math.random() * modifiers.length)];
     const fullMove = move + modifier;
-
-    const currentAxis = axisGroups[move];
-    if (currentAxis === prevAxis) continue;
-
+    const axis = axisGroups[move];
+    if (axis === prevAxis) continue;
     scramble.push(fullMove);
-    prevAxis = currentAxis;
+    prevAxis = axis;
   }
-
   return scramble.join(" ");
 }
 
-function updateAverages() {
-  const ao5 = solveTimes.slice(-5);
-  if (ao5.length === 5) {
-    const ao5Avg = ao5.reduce((acc, time) => acc + time, 0) / ao5.length;
-    ao5Display.textContent = `Ao5: ${formatTime(ao5Avg)}`;
-  }
-
-  const ao12 = solveTimes.slice(-12);
-  if (ao12.length === 12) {
-    const ao12Avg = ao12.reduce((acc, time) => acc + time, 0) / ao12.length;
-    ao12Display.textContent = `Ao12: ${formatTime(ao12Avg)}`;
-  }
-}
-
 function plotGraph() {
-  ctx.clearRect(0, 0, graphCanvas.width, graphCanvas.height);
-  ctx.fillStyle = "#39ff14";
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.beginPath();
-
-  const width = graphCanvas.width;
-  const height = graphCanvas.height;
+  ctx.strokeStyle = "#00ffc8";
   const times = solveTimes.slice(-10);
+  const step = canvas.width / (times.length - 1 || 1);
+  const maxTime = Math.max(...times, 1);
 
-  const step = width / times.length;
-  times.forEach((time, index) => {
-    const x = index * step;
-    const y = height - (time / Math.max(...times)) * height;
-    if (index === 0) {
-      ctx.moveTo(x, y);
-    } else {
-      ctx.lineTo(x, y);
-    }
+  times.forEach((time, i) => {
+    const x = i * step;
+    const y = canvas.height - (time / maxTime) * canvas.height;
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
   });
-
   ctx.stroke();
 }
 
-startStopBtn.addEventListener("click", () => {
-  if (running) {
-    stopTimer();
-  } else {
-    startTimer();
+function startCountdownAndTimer() {
+  if (countdownRunning || running) return; // Prevent overlapping actions
+  countdownRunning = true;
+  countdown = 3;
+  countdownText.textContent = countdown;
+  countdownText.style.display = "block";
+
+  countdownInterval = setInterval(() => {
+    countdown--;
+    countdownText.textContent = countdown;
+    if (countdown === 0) {
+      clearInterval(countdownInterval);
+      countdownText.style.display = "none";
+      countdownRunning = false;
+      resetTimer();
+      startTimer();
+    }
+  }, 1000);
+}
+
+// Improved keyboard and touch control
+let isKeyPressed = false;
+
+window.addEventListener("keydown", (e) => {
+  if (e.code === "Space") {
+    e.preventDefault(); // Prevent scrolling on spacebar press
+    if (!isKeyPressed) {
+      isKeyPressed = true;
+      if (running) {
+        stopTimer();
+      } else {
+        startCountdownAndTimer();
+      }
+    }
   }
 });
 
-// Start countdown before starting the timer
-startStopBtn.addEventListener("click", () => {
-  if (countdown === 3) {
-    countdownTimer.classList.remove("hidden");
-    countdownTimer.textContent = countdown;
-    countdownInterval = setInterval(() => {
-      countdown--;
-      countdownTimer.textContent = countdown;
-      if (countdown === 0) {
-        clearInterval(countdownInterval);
-        countdownTimer.classList.add("hidden");
-        resetTimer();
-        startTimer();
-      }
-    }, 1000);
-  }
+window.addEventListener("keyup", () => {
+  isKeyPressed = false; // Reset keypress flag on key release
 });
+
+// Init scramble
+scrambleDisplay.textContent = generateScramble();
