@@ -1,39 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>Speed Cubers Timer</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="A cube timer app for speedcubers with countdown, scramble generation, and solve tracking." />
+  <meta name="author" content="Abdullah Mustafa" />
+  <meta name="keywords" content="cube timer, speedcubing, rubik's cube, solve tracker" />
+  <title>Cube Timer</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+  <link rel="stylesheet" href="style.css" />
+  <script defer src="index.js"></script>
 </head>
+
 <body>
-    <div id="app">
-        <h1 id="title"></h1>
-        <div id="timer-container">
-            <h2 id="timer">00:00.00</h2>
-            <h3 id="scramble">Scramble: U R' U2 L2 D2</h3>
-            <div id="timer-controls">
-                <div id="countdown-timer" class="hidden">3</div>
-                <button id="start-stop" class="btn">Start</button>
-            </div>
-        </div>
+  <main id="app">
+    <h1 id="title">Cube Timer</h1>
 
-        <div id="history-container" class="card">
-            <h3>History & Averages</h3>
-            <div id="averages">
-                <p id="ao5">Ao5: -</p>
-                <p id="ao12">Ao12: -</p>
-            </div>
-            <div id="history">
-                <ul id="solves"></ul>
-            </div>
-        </div>
+    <!-- Timer Display -->
+    <section id="timer-container" aria-labelledby="timer-title">
+      <h2 id="timer-title" class="sr-only">Timer</h2>
+      <div id="countdown" class="hidden" aria-live="polite">Get Ready</div>
+      <div id="timer" aria-live="polite">00:00.00</div>
+      <div id="scramble" aria-live="polite">Scramble will appear here</div>
+      <button id="start-stop" aria-label="Start or Stop Timer">Start</button>
+    </section>
 
-        <div id="visuals">
-            <canvas id="graph"></canvas>
-        </div>
-    </div>
+    <!-- Times History -->
+    <section id="history-section" aria-labelledby="history-title">
+      <h2 id="history-title">History</h2>
+      <ul id="times-list" aria-live="polite">
+        <!-- Times will be appended here -->
+      </ul>
+    </section>
 
-    <script src="index.js"></script>
+    <!-- Averages -->
+    <section id="averages-section" aria-labelledby="averages-title">
+      <h2 id="averages-title">Averages</h2>
+      <p id="ao5" aria-live="polite">Ao5: N/A</p>
+      <p id="ao12" aria-live="polite">Ao12: N/A</p>
+    </section>
+
+    <!-- Chart Section -->
+    <section id="chart-section" aria-labelledby="chart-title">
+      <h2 id="chart-title">Times Chart</h2>
+      <canvas id="timesChart" width="600" height="300" aria-hidden="true"></canvas>
+    </section>
+  </main>
 </body>
 </html>
